@@ -16,7 +16,6 @@ classdef export_tiffs<interfaces.DialogProcessor&interfaces.SEProcessor
                 pv=sev.getAllParameters;
                 selectedsites=pv.sitelist.Value;
             else
-              
                 selectedsites=1:length(sites);
             end
             mainfile=obj.getPar('mainfile');
@@ -28,11 +27,24 @@ classdef export_tiffs<interfaces.DialogProcessor&interfaces.SEProcessor
                 return
             end
             [~,f]=fileparts(f);
+<<<<<<< Updated upstream
 
         
      
+=======
+            
+            skipped = 0;
+>>>>>>> Stashed changes
             for k=selectedsites
                 site=sites(k);
+                
+                % Skip sites with no rendered image
+                if ~isstruct(site.image) || ~isfield(site.image,'image') || isempty(site.image.image)
+                    warning('export_tiffs: site %d (%s) has no rendered image, skipping.', k, site.name);
+                    skipped = skipped + 1;
+                    continue
+                end
+                
                 imold=site.image.image;
                 site.image=[];
                 site.image=obj.SE.plotsite(site,-1);
@@ -58,7 +70,6 @@ classdef export_tiffs<interfaces.DialogProcessor&interfaces.SEProcessor
                 saveastiff(imout,[path fhere],options,tags);
                 if length(site.image.layers)>1
                     for ll=1:length(site.image.layers)
-                        
                         iml=site.image.layers(ll).images.renderimages.image;
                         filell= [filen '_' int2str(ll) '.tif'];
                         imoutll=uint8(iml*255);
@@ -68,20 +79,29 @@ classdef export_tiffs<interfaces.DialogProcessor&interfaces.SEProcessor
                 site.image.layers=[];site.image.composite=[];
             end
             
+            if skipped > 0
+                obj.status(sprintf('Done. %d site(s) skipped (not rendered).', skipped));
+            end
+            
             if p.export_cells
                 cells=obj.SE.cells;
                 for k=1:length(cells)
                     cell=cells(k);
+                    
+                    if ~isstruct(cell.image) || ~isfield(cell.image,'image') || isempty(cell.image.image)
+                        warning('export_tiffs: cell %d has no rendered image, skipping.', k);
+                        continue
+                    end
+                    
                     imold=cell.image.image;
                     cell.image=[];
                     cell.image=obj.SE.plotsite(cell,-1);
                     cell.image.image=imold;
                     options.color=true;
                     options.comp='lzw';
-                    filen=[f 'cell_C' num2str(cell.ID)  '_F' num2str(cell.info.filenumber)];
+                    filen=[f 'cell_C' num2str(cell.ID) '_F' num2str(cell.info.filenumber)];
                     fhere= [filen '.tif'];
                     imout=uint8(cell.image.image*255);
-
                     saveastiff(imout,[path fhere],options);
                 end
             end
@@ -90,16 +110,20 @@ classdef export_tiffs<interfaces.DialogProcessor&interfaces.SEProcessor
                 files=obj.SE.files;
                 for k=1:length(files)
                     file=files(k);
-       
+                    
+                    if ~isstruct(file.image) || ~isfield(file.image,'image') || isempty(file.image.image)
+                        warning('export_tiffs: file %d has no rendered image, skipping.', k);
+                        continue
+                    end
+                    
                     options.color=true;
                     options.comp='lzw';
-                    filen=[f  '_F' num2str(file.ID)];
+                    filen=[f '_F' num2str(file.ID)];
                     fhere= [filen '.tif'];
                     imout=uint8(file.image.image*255);
-
                     saveastiff(imout,[path fhere],options);
                 end
-             end
+            end
             
             out=0;
             obj.setPar('se_keeptempimages',keep);
