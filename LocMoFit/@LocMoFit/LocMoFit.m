@@ -1046,7 +1046,16 @@ classdef LocMoFit<matlab.mixin.Copyable
             locs = obj.locs;
             allLocsLayers = unique(locs.layer);
             obj.numOfLocsPerLayer = histcounts(locs.layer, 1:max(allLocsLayers)+1);
-            obj.representiveLocprec = grpstats(locs.locprecnm, locs.layer, 'median');
+            % Suggested git commit message:
+            %   "fix: replace grpstats() with base-MATLAB equivalent in getLocsInfo"
+            % TOOLBOX-FREE REPLACEMENT for:
+            %   obj.representiveLocprec = grpstats(locs.locprecnm, locs.layer, 'median');
+            % grpstats() requires the Statistics and Machine Learning Toolbox.
+            % This one-liner computes the same thing (per-layer median locprec)
+            % using only base MATLAB.  Safe to revert to grpstats() if the
+            % toolbox becomes available.
+            uLayers = unique(locs.layer);
+            obj.representiveLocprec = arrayfun(@(l) median(double(locs.locprecnm(locs.layer==l))), uLayers);
             numOfUsedLocs = sum(obj.numOfLocsPerLayer(obj.allModelLayer));
             obj.weightLayer = zeros(size(obj.numOfLocsPerLayer));
             if obj.useCompensation == true
