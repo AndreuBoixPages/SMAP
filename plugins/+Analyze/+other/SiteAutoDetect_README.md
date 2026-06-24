@@ -84,16 +84,8 @@ See `install_plugin.md` for the full steps. In short:
 The plugin is also available on the `ccp-autodetect` branch of the fork:
 `https://github.com/AndreuBoixPages/SMAP/tree/ccp-autodetect`
 
-## After detection — exporting site data
+## After detection — verifying it worked
 
-After running Detect Sites, use `exportSiteData.m` to export the detected sites to CSV:
-
-```matlab
-% In MATLAB command window
-run('exportSiteData.m')
-```
-
-To quickly verify detection worked:
 ```matlab
 se = g.locData.SE;
 fprintf('Sites detected: %d\n', length(se.sites));
