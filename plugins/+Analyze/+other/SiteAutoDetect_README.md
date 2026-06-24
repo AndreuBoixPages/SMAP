@@ -67,22 +67,34 @@ Use the locs histogram (Preview) to decide where to set `min_locs` — look for 
 
 ## Files
 
-| File | Purpose |
-|---|---|
-| `SiteAutoDetect.m` | Plugin class — copy to `<SMAP>/plugins/+Analyze/+other/` |
-| `install_plugin.md` | Step-by-step install instructions |
+| File | Location | Purpose |
+|---|---|---|
+| `SiteAutoDetect.m` | `plugins/+Analyze/+other/` on the `ccp-autodetect` branch | Plugin class |
+| `SiteAutoDetect_README.md` | same folder | This document |
+| `install_plugin.md` | `smlm_nn/3Dclathrin/src/` on Andreu's local machine | Detailed install instructions |
+
+Both files needed for installation (`SiteAutoDetect.m` and `install_plugin.md`) are available at:
+**https://github.com/AndreuBoixPages/SMAP/tree/ccp-autodetect/plugins/%2BAnalyze/%2Bother**
 
 ## Installation
 
-See `install_plugin.md` for the full steps. In short:
+1. Download `SiteAutoDetect.m` from the link above and copy it to `<SMAP_root>/plugins/+Analyze/+other/`
+2. Open `<SMAP_root>/plugins/plugin.m` and add these two entries:
 
-1. Copy `SiteAutoDetect.m` to `<SMAP_root>/plugins/+Analyze/+other/`
-2. Add two lines to `<SMAP_root>/plugins/plugin.m` (see `install_plugin.md`)
+   **In the `switch` block** (after the `makeMovieTiff` case):
+   ```matlab
+   case 'Analyze.other.SiteAutoDetect'
+      module=Analyze.other.SiteAutoDetect(varargin{:});
+   ```
+   **In the `out` struct** (after the `VersatileRenderer` line):
+   ```matlab
+   out.Analyze.other.SiteAutoDetect={'Analyze','other','SiteAutoDetect','Auto-detect CCP Sites','ProcessorPlugin'};
+   ```
 3. Run `clear classes` in MATLAB
 4. Plugin appears under **Analyze → other → Auto-detect CCP Sites**
 
-The plugin is also available on the `ccp-autodetect` branch of the fork:
-`https://github.com/AndreuBoixPages/SMAP/tree/ccp-autodetect`
+> If you want this included in the official SMAP distribution so everyone gets it on `git pull`,
+> open a pull request from `AndreuBoixPages/SMAP:ccp-autodetect` → `jries/SMAP:master`.
 
 ## After detection — verifying it worked
 
