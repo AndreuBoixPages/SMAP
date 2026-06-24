@@ -70,8 +70,7 @@ Use the locs histogram (Preview) to decide where to set `min_locs` — look for 
 | File | Location | Purpose |
 |---|---|---|
 | `SiteAutoDetect.m` | `plugins/+Analyze/+other/` on the `ccp-autodetect` branch | Plugin class |
-| `SiteAutoDetect_README.md` | same folder | This document |
-| `install_plugin.md` | `smlm_nn/3Dclathrin/src/` on Andreu's local machine | Detailed install instructions |
+| `SiteAutoDetect_README.md` | same folder | This document (install + usage instructions) |
 
 `SiteAutoDetect.m` is available at:
 **https://github.com/AndreuBoixPages/SMAP/tree/ccp-autodetect/plugins/%2BAnalyze/%2Bother**
